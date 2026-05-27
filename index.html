@@ -1,0 +1,120 @@
+import random
+
+# PDFに掲載されているエピソードの一覧とその属性（タグ）を定義
+EPISODES = [
+    {"name": "社長令嬢誘拐事件", "tags": ["routine"]},
+    {"name": "アイドル密室殺人事件", "tags": ["routine"]},
+    {"name": "赤鬼村火祭殺人事件", "tags": ["routine"]},
+    {"name": "奇妙な人捜し殺人事件", "tags": ["routine"]},
+    {"name": "お化け屋敷殺人事件", "tags": ["detective_boys"]},
+    {"name": "豪華客船連続殺人事件", "tags": ["routine"]},
+    {"name": "月いちプレゼント脅迫事件", "tags": ["routine"]},
+    {"name": "美術館オーナー殺人事件", "tags": ["routine"]},
+    {"name": "新幹線大爆破事件", "tags": ["routine"]},
+    {"name": "天下一夜祭殺人事件", "tags": ["routine"]},
+    {"name": "ピアノソナタ「月光」殺人事件", "tags": ["routine"]},
+    {"name": "プロサッカー選手脅迫事件", "tags": ["detective_boys"]},
+    {"name": "闇の男爵(ナイトバロン)殺人事件", "tags": ["routine"]},
+    {"name": "6月の花嫁殺人事件", "tags": ["love_romance"]},
+    {"name": "歩美ちゃん誘拐事件", "tags": ["detective_boys"]},
+    {"name": "小五郎の同窓会殺人事件", "tags": ["routine"]},
+    {"name": "外交官殺人事件", "tags": ["heiji"]},
+    {"name": "雪山山荘殺人事件", "tags": ["routine"]},
+    {"name": "テレビ局殺人事件", "tags": ["routine"]},
+    {"name": "ゲーム会社殺人事件", "tags": ["black_organization"]}, # テキーラ登場
+    {"name": "ホームズ・フリーク殺人事件", "tags": ["heiji"]},
+    {"name": "三つ子別荘殺人事件", "tags": ["love_romance"]},
+    {"name": "イラストレーター殺人事件", "tags": ["routine"]},
+    {"name": "大怪獣ゴメラ殺人事件", "tags": ["detective_boys"]},
+    {"name": "追いつめられた名探偵! 2大殺人事件", "tags": ["routine"]},
+    {"name": "スキーロッジ殺人事件", "tags": ["love_romance"]},
+    {"name": "人気アーティスト誘拐事件", "tags": ["detective_boys"]},
+    {"name": "金融会社社長殺人事件", "tags": ["routine"]},
+    {"name": "名家連続変死事件", "tags": ["heiji"]},
+    {"name": "帝丹小7不思議事件", "tags": ["detective_boys"]},
+    {"name": "コナンVS怪盗キッド", "tags": ["kid"]},
+    {"name": "名陶芸家殺人事件", "tags": ["routine"]},
+    {"name": "スキューバダイビング殺人事件", "tags": ["love_romance"]},
+    {"name": "強盗犯人入院事件", "tags": ["detective_boys"]},
+    {"name": "魔術愛好家殺人事件", "tags": ["kid"]}, # 怪盗キッド/黒羽快斗関連
+    {"name": "西の名探偵VS英語教師", "tags": ["heiji"]},
+    {"name": "揺れる警視庁 1200万人の人質", "tags": ["police", "love_romance"]},
+    {"name": "黒の組織との接触", "tags": ["black_organization"]},
+    {"name": "黒の組織から来た女 大学教授殺人事件", "tags": ["black_organization", "detective_boys"]}, # 灰原初登場
+    {"name": "黒の組織との再会", "tags": ["black_organization"]},
+    {"name": "命がけの復活", "tags": ["love_romance"]},
+    {"name": "そして人魚はいなくなった", "tags": ["heiji", "love_romance"]},
+    {"name": "集められた名探偵!工藤新一VS怪盗キッド", "tags": ["kid"]},
+    {"name": "本庁の刑事恋物語", "tags": ["police", "love_romance"]},
+    {"name": "服部平次VS工藤新一 ゲレンデの推理対決!", "tags": ["heiji", "love_romance"]},
+    {"name": "赤と黒のクラッシュ", "tags": ["black_organization"]},
+    {"name": "怪盗キッドの瞬間移動魔術", "tags": ["kid"]},
+    {"name": "殺人犯、工藤新一", "tags": ["heiji"]},
+    {"name": "ホームズの黙示録", "tags": ["love_romance"]},
+    {"name": "探偵たちの夜想曲(ノクターン)", "tags": ["black_organization"]}, # バーボン関連
+    {"name": "漆黒の特急(ミステリートレイン)", "tags": ["black_organization", "kid"]},
+    {"name": "緋色シリーズ", "tags": ["black_organization", "police"]},
+    {"name": "サクラの思い出", "tags": ["love_romance"]},
+    {"name": "紅の修学旅行", "tags": ["love_romance", "heiji"]},
+    {"name": "17年前の真相", "tags": ["black_organization"]}, # RUM関連
+    {"name": "キッドVS白馬 青の玉座", "tags": ["kid"]}
+]
+
+# 10回の質問のリスト（インデックス、質問文、影響するタグ）
+QUESTIONS = [
+    (1, "コナン本編の核心に迫る「黒の組織」が絡む話が好きですか？", "black_organization"),
+    (2, "神出鬼没な大泥棒「怪盗キッド」の華麗なトリックが見たいですか？", "kid"),
+    (3, "熱い関西弁の探偵「服部平次」が活躍する話が好きですか？", "heiji"),
+    (4, "少年探偵団（歩美・光彦・元太・灰原）がみんなで頑張るお話が好きですか？", "detective_boys"),
+    (5, "新一と蘭、あるいは警察内などの「ラブコメ（恋愛要素）」にキュンとしたいですか？", "love_romance"),
+    (6, "高木刑事や佐藤刑事など、警視庁の「警察関係者」がメインの事件が好きですか？", "police"),
+    (7, "特別なキャラクターの登場よりも、純粋でハラハラする「本格推理・日常事件」を楽しみたいですか？", "routine"),
+    (8, "ハッピーエンドだけでなく、少し切ない余韻が残る名作（「月光」など）に興味がありますか？", "routine"),
+    (9, "アニメでも数回にわたって放送されたような、スケールの大きい長編エピソードが好きですか？", "black_organization"),
+    (10, "幼少期の思い出や、過去の因縁が明らかになるエピソードが見たいですか？", "love_romance")
+]
+
+def run_diagnostic():
+    print("==================================================")
+    print(" 探偵コナン エピソード推薦 10の質問クエスチョン ")
+    print("==================================================")
+    print("『はい』なら『y』を、『いいえ』なら『n』を入力してください。\n")
+    
+    # スコア初期化
+    scores = {episode["name"]: 0 for episode in EPISODES}
+    
+    # 10回の質問を実行
+    for num, text, tag in QUESTIONS:
+        while True:
+            ans = input(f"Q{num}. {text} (y/n): ").strip().lower()
+            if ans in ['y', 'n']:
+                break
+            print("無効な入力です。'y' または 'n' で答えてください。")
+        
+        # YESの場合、該当するタグを持つエピソードのスコアを＋1
+        if ans == 'y':
+            for episode in EPISODES:
+                if tag in episode["tags"]:
+                    scores[episode["name"]] += 1
+        # NOの場合、該当するタグを持つエピソードのスコアを-1（ミスマッチを減らす）
+        else:
+            for episode in EPISODES:
+                if tag in episode["tags"]:
+                    scores[episode["name"]] -= 1
+
+    # 最高得点のエピソードを抽出
+    max_score = max(scores.values())
+    recommended_candidates = [name for name, score in scores.items() if score == max_score]
+    
+    # 同率1位がある場合はランダムで1つ選択
+    final_recommendation = random.choice(recommended_candidates)
+    
+    print("\n--------------------------------------------------")
+    print("【診断結果】")
+    print(f"あなたにオススメの名探偵コナン最高のエピソードは……")
+    print(f"🌟 『 {final_recommendation} 』 です！ 🌟")
+    print("--------------------------------------------------")
+    print("ぜひチェックしてみてくださいね！")
+
+if __name__ == "__main__":
+    run_diagnostic()
